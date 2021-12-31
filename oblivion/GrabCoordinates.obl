@@ -1,0 +1,6 @@
+scn GrabCoordinates
+
+begin function {}
+  RegisterLog "coords_2021"
+  let ChristmasQuest.treeCoordinates := ReadFromLog "coords_2021"
+end

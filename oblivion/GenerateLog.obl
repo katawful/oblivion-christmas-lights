@@ -1,0 +1,23 @@
+scn GenerateLog
+
+; this actually populates the log file properly
+
+string_var tempString
+
+begin OnActivate
+	; register log file that we will use for manipulation
+	RegisterLog "output_coords"
+	DeleteLinesFromLog "output_coords" 0 -1
+
+	; grab the coordinates into a variable
+	call GrabCoordinates
+
+	; generate the header of the string
+
+	let tempString := call HeaderString
+	scribe "%z|output_coords" tempString
+
+	; generate the frame data
+	let tempString := call GenerateFrameString
+	scribe "%z|output_coords" tempString
+end

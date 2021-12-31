@@ -1,0 +1,5 @@
+scn QuestScript
+
+; just holds quest vars
+
+array_var treeCoordinates

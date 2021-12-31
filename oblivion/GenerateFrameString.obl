@@ -1,0 +1,24 @@
+scn GenerateFrameString
+
+int i ; iterator
+int y ; iterator
+string_var lineString
+string_var formatString
+
+begin function {}
+  let i := 0
+  let y := 0
+  let lineString := ""
+  while i < 500
+		set lineString to sv_Construct "%z%g,%g,%g,", lineString, y, y, y
+    if y < 255
+      let y += 1
+    else
+      let y := 0
+    endif
+    let i += 1
+  loop
+  let formatString := "0,"
+  sv_Insert $formatString lineString 0
+  SetFunctionValue lineString ; return value
+end

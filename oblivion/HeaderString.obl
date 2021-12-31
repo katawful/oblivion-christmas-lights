@@ -1,0 +1,16 @@
+scn HeaderString
+
+; this generates the header string, basically just saying how many RGB LEDs there are
+
+string_var lineString ; output line
+int i ; for increment
+
+begin function {}
+	let i := 0
+	let lineString := "FRAME_ID,"
+	while i < 500
+		set lineString to sv_Construct "%zR_%g,G_%g,B_%g,", lineString, i, i, i
+		let i += 1
+	loop
+  SetFunctionValue lineString ; return the string
+end
