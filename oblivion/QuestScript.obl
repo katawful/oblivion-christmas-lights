@@ -4,4 +4,5 @@ scn QuestScript
 
 array_var treeCoordinates ; the coordinates, NOTE: index 0 is the log name not a value
 int currentFrame ; the current frame we are processing
+int currentLight ; the current light we are working on
 float planeY ; Y of plane that moves through the tree

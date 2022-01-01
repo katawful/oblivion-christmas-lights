@@ -1,0 +1,78 @@
+scn GetNearLights
+
+; this determines if the plane or other thing is near our current light
+array_var currentLight
+array_var currentPoint
+array_var currentRGB
+array_var outputRGB
+array_var iter
+float temp
+float percentError
+float ledPosition
+float pointPosition
+float distance
+float lightFactor ; to adjust light
+string_var tempString
+
+begin function {currentPoint, currentLight, currentRGB}
+  let outputRGB := ar_Construct StringMap
+
+  if ChristmasQuest.currentLight == 1
+    let tempString := currentLight[3]
+  else
+    let tempString := currentLight[2]
+  endif
+  let ledPosition := #tempString
+  let pointPosition := currentPoint[2]
+
+  ; add 10 to the Y axis for each so we never divide by 0
+  let ledPosition += 10
+  let pointPosition += 10
+
+  ; get the absolute distance
+  let distance := ledPosition - pointPosition
+  let distance := abs distance
+
+  ; light factor is the log of the distance
+  let lightFactor := ((log10 distance))
+  let lightFactor := abs lightFactor
+
+  ; if less than 1 then do 0.x * light
+  if lightFactor < 1 && distance < 1
+    let lightFactor *= 0.5
+    ; if distance is more than 1 we don't want these to show up as much
+  elseif distance > 1
+    let lightFactor *= 0.1
+  else
+    ; if more than one then use the inverse + 1 (ie we are close)
+    let lightFactor := 1 / lightFactor
+    let lightFactor := 1 + lightFactor
+  endif
+
+  printc "led: %g%rpoint: %g", ledPosition, pointPosition
+  printc "light factor: %g", lightFactor
+
+  ; make sure to cap light amount
+  let temp := currentRGB["red"]
+  let temp *= lightFactor
+  if temp > 255
+    let temp := 255
+  endif
+  let outputRGB["red"] := temp
+
+  let temp := currentRGB["green"]
+  let temp *= lightFactor
+  if temp > 255
+    let temp := 255
+  endif
+  let outputRGB["green"] := temp
+
+  let temp := currentRGB["blue"]
+  let temp *= lightFactor
+  if temp > 255
+    let temp := 255
+  endif
+  let outputRGB["blue"] := temp
+
+  SetFunctionValue outputRGB
+end

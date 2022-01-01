@@ -4,6 +4,7 @@ scn HeaderString
 
 string_var lineString ; output line
 int i ; for increment
+int temp
 
 begin function {}
 	let i := 0
@@ -12,5 +13,9 @@ begin function {}
 		set lineString to sv_Construct "%zR_%g,G_%g,B_%g,", lineString, i, i, i
 		let i += 1
 	loop
+  ; get rid of the last comma so its a valid CSV
+  let temp := (sv_Length lineString) - 1
+  sv_Erase lineString temp 1
+
   SetFunctionValue lineString ; return the string
 end
