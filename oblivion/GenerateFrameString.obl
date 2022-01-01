@@ -2,23 +2,66 @@ scn GenerateFrameString
 
 int i ; iterator
 int y ; iterator
-string_var lineString
-string_var formatString
+int red ; red
+int green ; green
+int blue ; blue
+string_var lineString ; output line string
+string_var formatString ; the format string we need to append the frame count
+array_var currentLED ; current LED array
+string_var currentX ; X position
+string_var currentZ ; Z position
+string_var currentY ; Y position
+string_var tempString
+array_var iter
+float temp
+string_var tempIterString
 
 begin function {}
-  let i := 0
-  let y := 0
+  let i := 1
+  let red := 0
+  let green := 0
+  let blue := 0
   let lineString := ""
-  while i < 500
-		set lineString to sv_Construct "%z%g,%g,%g,", lineString, y, y, y
-    if y < 255
-      let y += 1
-    else
-      let y := 0
+
+
+  ; create each RGB string component for each bulb
+  ; NOTE: this must always be called always, thus all math must be handled within here
+  while i < 501
+    ; reset values
+    set red to 0
+    set green to 0
+    set blue to 0
+    ; get the currentLED array
+    ; printc "i is: %g", i
+    let tempString := ChristmasQuest.treeCoordinates[i]
+    let currentLED := sv_Split tempString ","
+    ; foreach iter <- currentLED
+    ;   let temp := iter["key"]
+    ;   printc "LED key is: %g", temp
+    ;   let tempIterString := iter["value"]
+    ;   printc "LED Value is: %z", tempIterString
+    ; loop
+
+    if i == 1
+      let currentY := currentLED[3]
+    else 
+      let currentY := currentLED[2]
     endif
+    let temp := #currentY
+    printc "planeY is : %g%rtemp is: %g", ChristmasQuest.planeY, temp
+    if temp <= ChristmasQuest.planeY
+      set red to 250
+      print "red set"
+    else
+      print "NO RED NOT SET !!!"
+    endif
+
+    ; push the string
+    set lineString to sv_Construct "%z%g,%g,%g,", lineString, red, blue, green
     let i += 1
   loop
-  let formatString := "0,"
-  sv_Insert $formatString lineString 0
+  ; update frame number
+  let lineString := call AddFrame lineString
+
   SetFunctionValue lineString ; return value
 end

@@ -9,6 +9,12 @@ begin OnActivate
 	RegisterLog "output_coords"
 	DeleteLinesFromLog "output_coords" 0 -1
 
+	; set current frame to 0
+	let ChristmasQuest.currentFrame := 0
+
+	; set math values to 0
+	let ChristmasQuest.planeY := 0
+
 	; grab the coordinates into a variable
 	call GrabCoordinates
 
@@ -18,6 +24,9 @@ begin OnActivate
 	scribe "%z|output_coords" tempString
 
 	; generate the frame data
-	let tempString := call GenerateFrameString
-	scribe "%z|output_coords" tempString
+	while ChristmasQuest.planeY < 3
+		let tempString := call GenerateFrameString
+		scribe "%z|output_coords" tempString
+	  let ChristmasQuest.planeY += 0.1
+	loop
 end

@@ -1,0 +1,17 @@
+scn AddFrame
+
+; this adds the correct frame to the line data and updates everything accordingly
+; NOTE: this must always be called at the end of a data parse
+
+string_var inputString
+string_var lineString
+string_var formatString
+
+begin function {inputString}
+  let formatString := sv_Construct "%g,", ChristmasQuest.currentFrame
+  let lineString := inputString
+  sv_Insert $formatString lineString 0
+  let ChristmasQuest.currentFrame += 1
+
+  SetFunctionValue lineString
+end
