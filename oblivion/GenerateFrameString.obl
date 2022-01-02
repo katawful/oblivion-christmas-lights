@@ -37,8 +37,8 @@ begin function {}
     let currentRGB["green"] := 0.0
     let currentRGB["blue"] := 0.0
     let currentPoint := ar_Construct Array
-    let currentPoint[0] := "null"
-    let currentPoint[1] := "null"
+    let currentPoint[0] := ChristmasQuest.planeX
+    let currentPoint[1] := ChristmasQuest.planeZ
     let currentPoint[2] := ChristmasQuest.planeY
 
     ; get the currentLED array

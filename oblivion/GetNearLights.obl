@@ -38,13 +38,14 @@ begin function {currentPoint, currentLight, currentRGB}
   let lightFactor := abs lightFactor
 
   ; if less than 1 then do 0.x * light
-  if lightFactor < 1 && distance < 1
+  if lightFactor < 1 && distance < 0.25
     let lightFactor *= 0.5
     ; if distance is more than 1 we don't want these to show up as much
-  elseif distance > 1
+  elseif distance > 0.25
     let lightFactor *= 0.1
   else
     ; if more than one then use the inverse + 1 (ie we are close)
+    ; this is a backup i think
     let lightFactor := 1 / lightFactor
     let lightFactor := 1 + lightFactor
   endif
