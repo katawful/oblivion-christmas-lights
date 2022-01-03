@@ -1,57 +1,129 @@
 scn GetNearLights
 
-; this determines if the plane or other thing is near our current light
-array_var currentLight
-array_var currentPoint
-array_var currentRGB
-array_var outputRGB
+; this determines if the plane or other thing is near our current light and solely adjust brightness
+; TODO: implement HSLUV in oblivion instead of adjusting RGB values
+
+; arrays to hold things
+array_var currentLight ; current LED
+array_var currentPoint ; current point from plane
+array_var currentRGB ; current RGB values
+array_var outputRGB ; the output RGB values
+
 array_var iter
 float temp
-float percentError
-float ledPosition
-float pointPosition
-float distance
+
+; LED's position
+float ledX
+float ledZ
+float ledY
+
+; point from the plane's position
+float pointX
+float pointZ
+float pointY
+
+float distanceX ; distance from plane in x position
+float distanceZ ; distance from plane in z position
+float distanceY ; distanceY from plane in y position
+
 float lightFactor ; to adjust light
+int planeChoice ; 3 bit number 000, xyz
+
 string_var tempString
 
-begin function {currentPoint, currentLight, currentRGB}
+begin function {currentPoint, currentLight, currentRGB, planeChoice}
   let outputRGB := ar_Construct StringMap
 
+  ; the csv from matt has a BOM character for some reason, so the first line will
+  ; be broken, thus we need to skip over it
   if ChristmasQuest.currentLight == 1
-    let tempString := currentLight[3]
+    let ledX := ToNumber currentLight[1]
+    let ledZ := ToNumber currentLight[2]
+    let ledY := ToNumber currentLight[3]
   else
-    let tempString := currentLight[2]
-  endif
-  let ledPosition := #tempString
-  let pointPosition := currentPoint[2]
-
-  ; add 10 to the Y axis for each so we never divide by 0
-  let ledPosition += 10
-  let pointPosition += 10
-
-  ; get the absolute distance
-  let distance := ledPosition - pointPosition
-  let distance := abs distance
-
-  ; light factor is the log of the distance
-  let lightFactor := ((log10 distance))
-  let lightFactor := abs lightFactor
-
-  ; if less than 1 then do 0.x * light
-  if lightFactor < 1 && distance < 0.25
-    let lightFactor *= 0.5
-    ; if distance is more than 1 we don't want these to show up as much
-  elseif distance > 0.25
-    let lightFactor *= 0.1
-  else
-    ; if more than one then use the inverse + 1 (ie we are close)
-    ; this is a backup i think
-    let lightFactor := 1 / lightFactor
-    let lightFactor := 1 + lightFactor
+    let ledX := ToNumber currentLight[0]
+    let ledZ := ToNumber currentLight[1]
+    let ledY := ToNumber currentLight[2]
   endif
 
-  printc "led: %g%rpoint: %g", ledPosition, pointPosition
-  printc "light factor: %g", lightFactor
+  let pointX := currentPoint[0]
+  let pointZ := currentPoint[1]
+  let pointY := currentPoint[2]
+
+  ; add 10 to each axis for each so we never divide by 0
+  let ledX += 10
+  let ledZ += 10
+  let ledY += 10
+  let pointX += 10
+  let pointZ += 10
+  let pointY += 10
+
+  ; get the absolute distanceX
+  let distanceX := ledX - pointX
+  let distanceX := abs distanceX
+  ; get the absolute distanceZ
+  let distanceZ := ledZ - pointZ
+  let distanceZ := abs distanceZ
+  ; get the absolute distanceY
+  let distanceY := ledY - pointY
+  let distanceY := abs distanceY
+
+  ; 100
+  if planeChoice == 4
+    ; light factor is the log of the distanceX
+    let lightFactor := ((log10 distanceX))
+    let lightFactor := abs lightFactor
+
+    ; essentially just compress everything to within the distance of the plane idk
+    ; if less than 1 then do 0.x * light
+    if lightFactor < 1 && distanceX < 0.25
+      let lightFactor *= 0.5
+      ; if distanceX is more than 1 we don't want these to show up as much
+    elseif distanceX > 0.25
+      let lightFactor *= 0.1
+    else
+      ; if more than one then use the inverse + 1 (ie we are close)
+      ; this is a backup i think
+      let lightFactor := 1 / lightFactor
+      let lightFactor := 1 + lightFactor
+    endif
+  elseif planeChoice == 2
+    ; light factor is the log of the distanceZ
+    let lightFactor := ((log10 distanceZ))
+    let lightFactor := abs lightFactor
+
+    ; essentially just compress everything to within the distance of the plane idk
+    ; if less than 1 then do 0.x * light
+    if lightFactor < 1 && distanceZ < 0.25
+      let lightFactor *= 0.5
+      ; if distanceZ is more than 1 we don't want these to show up as much
+    elseif distanceZ > 0.25
+      let lightFactor *= 0.1
+    else
+      ; if more than one then use the inverse + 1 (ie we are close)
+      ; this is a backup i think
+      let lightFactor := 1 / lightFactor
+      let lightFactor := 1 + lightFactor
+    endif
+  elseif planeChoice == 1
+    ; light factor is the log of the distanceY
+    let lightFactor := ((log10 distanceY))
+    let lightFactor := abs lightFactor
+
+    ; essentially just compress everything to within the distance of the plane idk
+    ; if less than 1 then do 0.x * light
+    if lightFactor < 1 && distanceY < 0.25
+      let lightFactor *= 1.5
+      ; if distanceY is more than 1 we don't want these to show up as much
+    elseif distanceY > 0.25
+      let lightFactor *= 0.1
+    else
+      ; if more than one then use the inverse + 1 (ie we are close)
+      ; this is a backup i think
+      let lightFactor := 1 / lightFactor
+      let lightFactor := 1 + lightFactor
+    endif
+  endif
 
   ; make sure to cap light amount
   let temp := currentRGB["red"]

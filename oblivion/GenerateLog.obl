@@ -12,26 +12,40 @@ begin OnActivate
 	; set current frame to 0
 	let ChristmasQuest.currentFrame := 0
 
-	; set math values to 0
-	let ChristmasQuest.planeY := -0.1
-
 	; grab the coordinates into a variable
 	call GrabCoordinates
 
-	; generate the header of the string
+  ; set bounding box
+  let ChristmasQuest.treeBoundingBox := call GetBoundingBox
 
+	; set math values to 0
+	let ChristmasQuest.planeY := -0.5
+	let ChristmasQuest.planeX := ChristmasQuest.treeBoundingBox[0] - 0.5
+	let ChristmasQuest.planeZ := ChristmasQuest.treeBoundingBox[2] - 0.5
+
+	; generate the header of the string
 	let tempString := call HeaderString
 	scribe "%z|output_coords" tempString
 
 	; generate the frame data
-	while ChristmasQuest.planeY <= 3.5
-		let tempString := call GenerateFrameString
+	while ChristmasQuest.planeY <= (ChristmasQuest.treeBoundingBox[4] + 0.5)
+		let tempString := call MovePlane 0 0 1 100 100 0
 		scribe "%z|output_coords" tempString
 	  let ChristmasQuest.planeY += 0.05
 	loop
-	while ChristmasQuest.planeY >= -0.1
-		let tempString := call GenerateFrameString
-		scribe "%z|output_coords" tempString
-	  let ChristmasQuest.planeY -= 0.05
-	loop
+	; while ChristmasQuest.planeY >= -0.5
+	; 	let tempString := call MovePlane 0 0 1 100 100 0
+	; 	scribe "%z|output_coords" tempString
+	;   let ChristmasQuest.planeY -= 0.05
+	; loop
+	; while ChristmasQuest.planeX <= (ChristmasQuest.treeBoundingBox[1] + 0.5)
+	; 	let tempString := call MovePlane 1 0 0 100 0 0
+	; 	scribe "%z|output_coords" tempString
+	;   let ChristmasQuest.planeX += 0.05
+	; loop
+	; while ChristmasQuest.planeX >= (ChristmasQuest.treeBoundingBox[0] - 0.5)
+	; 	let tempString := call MovePlane 1 0 0 100 0 0
+	; 	scribe "%z|output_coords" tempString
+	;   let ChristmasQuest.planeX -= 0.05
+	; loop
 end

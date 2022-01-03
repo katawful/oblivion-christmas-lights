@@ -79,11 +79,5 @@ begin function {}
 	ar_Append boundingBox smallZ
 	ar_Append boundingBox tempY
 
-	foreach iter <- boundingBox
-		let temp := iter["value"]
-		let temp1 := iter["key"]
-		printc "key: %g%rvalue: %g", temp1, temp
-	loop
-
   SetFunctionValue boundingBox
 end

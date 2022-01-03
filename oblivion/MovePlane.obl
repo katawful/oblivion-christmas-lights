@@ -1,41 +1,57 @@
-scn GenerateFrameString
+scn MovePlane
 
 int i ; iterator
 int y ; iterator
+int bPlaneX ; use x plane?
+int bPlaneZ ; use z plane?
+int bPlaneY ; use y plane?
+int planeChoice ; 3 bit output for choice
 float red ; red
 float green ; green
 float blue ; blue
+float outRed ; red
+float outGreen ; green
+float outBlue ; blue
 string_var lineString ; output line string
 string_var formatString ; the format string we need to append the frame count
 array_var currentLED ; current LED array
 array_var currentPoint ; need to pass this to get the nearest lights
 array_var currentRGB ; the rgb values
-string_var currentX ; X position
-string_var currentZ ; Z position
-string_var currentY ; Y position
+
+float currentX ; X position
+float currentZ ; Z position
+float currentY ; Y position
+
 string_var tempString
 array_var iter
 float temp
 float temp1
 string_var tempIterString
 
-begin function {}
+begin function {bPlaneX, bPlaneZ, bPlaneY, red, green, blue}
   let i := 1
-  let red := 0
-  let green := 0
-  let blue := 0
   let lineString := ""
+  let planeChoice := 0
   let ChristmasQuest.currentLight := 1
 
+  if bPlaneX
+    let planeChoice := 4
+  endif
+  if bPlaneZ
+    let planeChoice := 2
+  endif
+  if bPlaneY
+    let planeChoice := 1
+  endif
 
   ; create each RGB string component for each bulb
   ; NOTE: this must always be called always, thus all math must be handled within here
   while ChristmasQuest.currentLight < 501
     ; reset values
     let currentRGB := ar_Construct StringMap
-    let currentRGB["red"] := 0.0
-    let currentRGB["green"] := 0.0
-    let currentRGB["blue"] := 0.0
+    let currentRGB["red"] := red
+    let currentRGB["green"] := green
+    let currentRGB["blue"] := blue
     let currentPoint := ar_Construct Array
     let currentPoint[0] := ChristmasQuest.planeX
     let currentPoint[1] := ChristmasQuest.planeZ
@@ -48,24 +64,25 @@ begin function {}
     ; the csv from matt has a BOM character for some reason, so the first line will
     ; be broken, thus we need to skip over it
     if ChristmasQuest.currentLight == 1
-      let currentY := currentLED[3]
-    else 
-      let currentY := currentLED[2]
+      let currentX := ToNumber currentLED[1]
+      let currentZ := ToNumber currentLED[2]
+      let currentY := ToNumber currentLED[3]
+    else
+      let currentX := ToNumber currentLED[0]
+      let currentZ := ToNumber currentLED[1]
+      let currentY := ToNumber currentLED[2]
     endif
-
-    let currentRGB["red"] := 100.0
-    let currentRGB["blue"] := 100.0
 
     ; we simply pass of the plane moving to here
     ; this function will simply find the nearest colors to the plane and show them
-    let currentRGB := (call GetNearLights currentPoint currentLED currentRGB)
+    ; TODO: do something better
+    let currentRGB := (call GetNearLights currentPoint currentLED currentRGB planeChoice)
 
     ; push the string
-    let red := currentRGB["red"]
-    let green := currentRGB["green"]
-    let blue := currentRGB["blue"]
-    printc "red is: %g", red
-    set lineString to sv_Construct "%z%g,%g,%g,", lineString, red, green, blue
+    let outRed := currentRGB["red"]
+    let outGreen := currentRGB["green"]
+    let outBlue := currentRGB["blue"]
+    set lineString to sv_Construct "%z%g,%g,%g,", lineString, outRed, outGreen, outBlue
     let ChristmasQuest.currentLight += 1
   loop
   ; get rid of the last comma so its a valid CSV
