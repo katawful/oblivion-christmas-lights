@@ -20,8 +20,8 @@ begin OnActivate
 
 	; set math values to 0
 	let ChristmasQuest.planeY := -0.5
-	let ChristmasQuest.planeX := ChristmasQuest.treeBoundingBox[0] - 0.5
-	let ChristmasQuest.planeZ := ChristmasQuest.treeBoundingBox[2] - 0.5
+	let ChristmasQuest.planeX := ChristmasQuest.treeBoundingBox[1] - 0.5
+	let ChristmasQuest.planeZ := ChristmasQuest.treeBoundingBox[3] - 0.5
 
 	; generate the header of the string
 	let tempString := call HeaderString
@@ -33,19 +33,19 @@ begin OnActivate
 		scribe "%z|output_coords" tempString
 	  let ChristmasQuest.planeY += 0.05
 	loop
-	; while ChristmasQuest.planeY >= -0.5
-	; 	let tempString := call MovePlane 0 0 1 100 100 0
-	; 	scribe "%z|output_coords" tempString
-	;   let ChristmasQuest.planeY -= 0.05
-	; loop
-	; while ChristmasQuest.planeX <= (ChristmasQuest.treeBoundingBox[1] + 0.5)
-	; 	let tempString := call MovePlane 1 0 0 100 0 0
-	; 	scribe "%z|output_coords" tempString
-	;   let ChristmasQuest.planeX += 0.05
-	; loop
-	; while ChristmasQuest.planeX >= (ChristmasQuest.treeBoundingBox[0] - 0.5)
-	; 	let tempString := call MovePlane 1 0 0 100 0 0
-	; 	scribe "%z|output_coords" tempString
-	;   let ChristmasQuest.planeX -= 0.05
-	; loop
+	while ChristmasQuest.planeY >= -0.5
+		let tempString := call MovePlane 0 0 1 100 100 0
+		scribe "%z|output_coords" tempString
+	  let ChristmasQuest.planeY -= 0.05
+	loop
+	while ChristmasQuest.planeX <= (ChristmasQuest.treeBoundingBox[0] + 0.5)
+		let tempString := call MovePlane 1 0 0 100 0 0
+		scribe "%z|output_coords" tempString
+	  let ChristmasQuest.planeX += 0.05
+	loop
+	while ChristmasQuest.planeX >= (ChristmasQuest.treeBoundingBox[1] - 0.5)
+		let tempString := call MovePlane 1 0 0 100 0 0
+		scribe "%z|output_coords" tempString
+	  let ChristmasQuest.planeX -= 0.05
+	loop
 end
