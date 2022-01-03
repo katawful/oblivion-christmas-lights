@@ -1,0 +1,89 @@
+scn GetBoundingBox
+
+; this gets a bounding box of the lights for an accurate size
+
+float ledX
+float ledZ
+float ledY
+; we need to compare the smallest and the largest sizes for X and Z
+float smallX
+float largeX
+float smallZ
+float largeZ
+float tempY
+float temp
+int temp1
+
+string_var tempString
+
+array_var storageArray
+array_var boundingBox
+array_var iter
+
+int i ; iterator
+
+begin function {}
+  let boundingBox := ar_Construct Array
+
+	let i := 1
+	; set checking variables to a neutral value
+	let largeX := 0
+	let smallX := 0
+	let largeZ := 0
+	let smallZ := 0
+	let tempY := 0
+
+	while i < 501
+    let tempString := ChristmasQuest.treeCoordinates[i]
+		let storageArray := sv_Split tempString ","
+    ; the csv from matt has a BOM character for some reason, so the first line will
+    ; be broken, thus we need to skip over it
+    if i == 1
+      let ledX := ToNumber storageArray[1]
+      let ledZ := ToNumber storageArray[2]
+      let ledY := ToNumber storageArray[3]
+    else
+      let ledX := ToNumber storageArray[0]
+      let ledZ := ToNumber storageArray[1]
+      let ledY := ToNumber storageArray[2]
+    endif
+
+		; check if ledX is larger than largeX
+		if ledX > largeX
+			let largeX := ledX
+		endif
+		; check if ledX is smaller than smallX
+		if ledX < smallX
+			let smallX := ledX
+		endif
+		; check if ledZ is larger than largeZ
+		if ledZ > largeZ
+			let largeZ := ledZ
+		endif
+		; check if ledZ is smaller than smallZ
+		if ledZ < smallZ
+			let smallZ := ledZ
+		endif
+		; check if ledY is larger than tempY
+		if ledY > tempY
+			let tempY := ledY
+		endif
+
+		let i += 1
+	loop
+
+	; create array with our info
+	ar_Append boundingBox largeX
+	ar_Append boundingBox smallX
+	ar_Append boundingBox largeZ
+	ar_Append boundingBox smallZ
+	ar_Append boundingBox tempY
+
+	foreach iter <- boundingBox
+		let temp := iter["value"]
+		let temp1 := iter["key"]
+		printc "key: %g%rvalue: %g", temp1, temp
+	loop
+
+  SetFunctionValue boundingBox
+end
