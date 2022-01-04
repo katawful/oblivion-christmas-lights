@@ -1,0 +1,65 @@
+scn hsluvConstants
+
+; hsluv constants
+
+;; NOTE: THE FOLLOWING IS THE COPYRIGHT NOTICE FROM THE HSLuv IMPLEMENTATION USED FOR THIS
+;; PROJECT. THE TEXT IS UNCHANGE AS PER THE NOTICE
+
+;; Lua implementation of HSLuv and HPLuv color spaces
+;; Homepage: http://www.hsluv.org/
+;; Copyright (C) 2019 Alexei Boronine
+;; Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+;; associated documentation files (the "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+;; copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
+;; following conditions:
+;; The above copyright notice and this permission notice shall be included in all copies or substantial
+;; portions of the Software.
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+;; LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+;; NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+;; WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+;; SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+array_var tempArray
+
+begin function {}
+  set ChristmasQuest.hsluvRefY to 1.0
+  set ChristmasQuest.hsluvRefU to 0.19783000664283
+  set ChristmasQuest.hsluvRefV to 0.46831999493879
+  set ChristmasQuest.hsluvKappa to 903.2962962
+  set ChristmasQuest.hsluvEpsilon to 0.0088564516
+  let ChristmasQuest.m := ar_Construct Array
+  let ChristmasQuest.minv := ar_Construct Array
+  let tempArray := ar_Construct Array
+  let tempArray[0] := 3.240969941904521
+  let tempArray[1] := -1.537383177570093
+  let tempArray[2] := -0.498610760293
+  ar_Append ChristmasQuest.m tempArray
+  let tempArray := ar_Construct Array
+  let tempArray[0] := -0.96924363628087
+  let tempArray[1] := 1.87596750150772
+  let tempArray[2] := 0.041555057407175
+  ar_Append ChristmasQuest.m tempArray
+  let tempArray := ar_Construct Array
+  let tempArray[0] := 0.055630079696993
+  let tempArray[1] := -0.20397695888897
+  let tempArray[2] := 1.056971514242878
+  ar_Append ChristmasQuest.m tempArray
+
+  let tempArray := ar_Construct Array
+  let tempArray[0] := 0.41239079926595
+  let tempArray[1] := 0.35758433938387
+  let tempArray[2] := 0.18048078840183
+  ar_Append ChristmasQuest.minv tempArray
+  let tempArray := ar_Construct Array
+  let tempArray[0] := 0.21263900587151
+  let tempArray[1] := 0.71516867876775
+  let tempArray[2] := 0.072192315360733 
+  ar_Append ChristmasQuest.minv tempArray
+  let tempArray := ar_Construct Array
+  let tempArray[0] := 0.019330818715591
+  let tempArray[1] := 0.11919477979462
+  let tempArray[2] := 0.95053215224966
+  ar_Append ChristmasQuest.minv tempArray
+end

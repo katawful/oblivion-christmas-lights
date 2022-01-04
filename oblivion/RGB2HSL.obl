@@ -1,0 +1,151 @@
+scn RGB2HSL
+
+; rgb to hsl
+
+;; NOTE: THE FOLLOWING IS THE COPYRIGHT NOTICE FROM THE HSLuv IMPLEMENTATION USED FOR THIS
+;; PROJECT. THE TEXT IS UNCHANGE AS PER THE NOTICE
+
+;; Lua implementation of HSLuv and HPLuv color spaces
+;; Homepage: http://www.hsluv.org/
+;; Copyright (C) 2019 Alexei Boronine
+;; Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+;; associated documentation files (the "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+;; copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
+;; following conditions:
+;; The above copyright notice and this permission notice shall be included in all copies or substantial
+;; portions of the Software.
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+;; LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+;; NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+;; WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+;; SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+array_var rgbArray ; input rgb
+array_var hsl
+array_var process
+array_var iter
+array_var tempArray
+
+float temp
+float temp1
+float value
+int i
+int j
+int key
+float sum
+float varU
+float varV
+float X
+float Y
+float divider
+float L
+float U
+float V
+float Chrominance
+float H
+float maxChroma
+float hrad
+float min
+float slope
+float intercept
+float sub1
+float sub2
+float n1
+float n2
+float n3
+float top1
+float top2
+float hslbottom
+array_var bound
+array_var bounds
+float length
+float minimum
+
+begin function {rgbArray}
+  let process := ar_Construct Array
+  ; rgb to decimal
+  let process[0] := rgbArray[0] / 255
+  let process[1] := rgbArray[1] / 255
+  let process[2] := rgbArray[2] / 255
+  ; rgb 2 xyz
+  ; to linear
+	; temp array to linear
+	let tempArray := ar_Construct Array
+  let tempArray[0] := call hsluvToLinear process[0]
+  let tempArray[1] := call hsluvToLinear process[1]
+  let tempArray[2] := call hsluvToLinear process[2]
+  ; dot product
+	; use linear temp array
+  let process[0] := call hsluvDotProduct ChristmasQuest.minv[0] tempArray
+  let process[1] := call hsluvDotProduct ChristmasQuest.minv[1] tempArray
+  let process[2] := call hsluvDotProduct ChristmasQuest.minv[2] tempArray
+
+  ; xyz to luv
+  let X := process[0]
+  let Y := process[1]
+  let divider := X + 15 * Y + 3 * (process[2])
+  let varU := 4 * X
+  let varV := 9 * Y
+  if divider != 0
+    let varU /= divider
+    let varV /= divider
+  else
+    let varU := 0
+    let varV := 0
+  endif
+  let L := call hsluvYToL Y
+  if L == 0
+    let process[0] := 0
+    let process[1] := 0
+    let process[2] := 0
+  else
+    let process[0] := L
+    let process[1] := 13 * L * (varU - ChristmasQuest.hsluvRefU)
+    let process[2] := 13 * L * (varV - ChristmasQuest.hsluvRefV)
+  endif
+
+  ; luv to lch
+  let L := process[0]
+  let U := process[1]
+  let V := process[2]
+  let temp := U * U + V * V
+  let Chrominance := sqrt temp
+  if Chrominance < 0.00000001
+    let H := 0
+  else
+		; use radians here
+    let H := (ratan2 V U) * 180 / 3.1415926535897932
+    if H < 0
+      let H := 360 + H
+    endif
+  endif
+  let process[0] := L
+  let process[1] := Chrominance
+  let process[2] := H
+
+  ; lch to hsluv
+  let hsl := ar_Construct Array
+  let maxChroma := call hsluvMaxChromaLH process[0] process[2]
+  let temp := process[0]
+  let hsl[0] := process[2]
+  let hsl[1] := process[1] / maxChroma * 100
+  let hsl[2] := process[0]
+  if temp > 99.9999
+    let hsl[0] := process[2]
+    let hsl[1] := 0
+    let hsl[2] := 100
+  endif
+  if temp < 0.0000000001
+    let hsl[0] := process[2]
+    let hsl[1] := 0
+    let hsl[2] := 0
+  endif
+
+
+  foreach iter <- hsl
+    let temp := iter["value"]
+    let temp1 := iter["key"]
+  loop
+  SetFunctionValue hsl
+end
