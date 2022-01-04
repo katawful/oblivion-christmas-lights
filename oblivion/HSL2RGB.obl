@@ -1,0 +1,105 @@
+scn HSL2RGB
+
+; HSLuv to RGB
+
+;; NOTE: THE FOLLOWING IS THE COPYRIGHT NOTICE FROM THE HSLuv IMPLEMENTATION USED FOR THIS
+;; PROJECT. THE TEXT IS UNCHANGE AS PER THE NOTICE
+
+;; Lua implementation of HSLuv and HPLuv color spaces
+;; Homepage: http://www.hsluv.org/
+;; Copyright (C) 2019 Alexei Boronine
+;; Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+;; associated documentation files (the "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+;; copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
+;; following conditions:
+;; The above copyright notice and this permission notice shall be included in all copies or substantial
+;; portions of the Software.
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+;; LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+;; NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+;; WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+;; SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+array_var hsl
+array_var rgbArray
+array_var process
+array_var tempArray
+array_var iter
+float temp
+
+float H
+float Saturation
+float L
+float Chrominance
+float hrad
+float U
+float V
+float varU
+float varV
+float Y
+float X
+
+begin function {hsl}
+  let process := ar_Construct Array
+
+  ; hsluv to lch
+  let H := hsl[0]
+  let Saturation := hsl[1]
+  let L := hsl[2]
+
+  if L > 99.99999999
+    let process[0] := 100
+    let process[1] := 0
+    let process[2] := H
+  endif
+  if L < 0.0000001
+    let process[0] := 0
+    let process[1] := 0
+    let process[2] := H
+  endif
+  let process[0] := L
+  let process[1] := (call hsluvMaxChromaLH L H) / 100 * Saturation
+  let process[2] := H
+
+  ; lch to luv
+  let L := process[0]
+  let Chrominance := process[1]
+  let hrad := process[2] / 360.0 * 2 * 3.1415926535
+  let process[0] := L
+  let process[1] := (rcos hrad) * Chrominance
+  let process[2] := (rsin hrad) * Chrominance
+
+  ; luv to xyz
+  let L := process[0]
+  let U := process[1]
+  let V := process[2]
+  if L == 0
+    let process[0] := 0
+    let process[1] := 0
+    let process[2] := 0
+  else
+    let varU := U / (13 * L) + ChristmasQuest.hsluvRefU
+    let varV := V / (13 * L) + ChristmasQuest.hsluvRefV
+    let Y := call hsluvLToY L
+    let X := 0 - (9 * Y * varU) / ((((varU - 4) * varV) - varU * varV))
+    let process[0] := X
+    let process[1] := Y
+    let process[2] := (9 * Y - 15 * varV * Y - varV * X) / (3 * varV)
+  endif
+  let temp := process[0]
+  printc "process 0 is: %g", temp
+  let temp := process[1]
+  printc "process 1 is: %g", temp
+  let temp := process[2]
+  printc "process 2 is: %g", temp
+
+  ; xyz to rgb
+  let tempArray := process
+  let rgbArray := ar_Construct Array
+  let rgbArray[0] := call hsluvFromLinear (call hsluvDotProduct ChristmasQuest.m[0] tempArray)
+  let rgbArray[1] := call hsluvFromLinear (call hsluvDotProduct ChristmasQuest.m[1] tempArray)
+  let rgbArray[2] := call hsluvFromLinear (call hsluvDotProduct ChristmasQuest.m[2] tempArray)
+
+  SetFunctionValue rgbArray
+end
