@@ -143,9 +143,5 @@ begin function {rgbArray}
   endif
 
 
-  foreach iter <- hsl
-    let temp := iter["value"]
-    let temp1 := iter["key"]
-  loop
   SetFunctionValue hsl
 end
