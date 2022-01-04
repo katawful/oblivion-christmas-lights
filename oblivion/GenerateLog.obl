@@ -3,8 +3,13 @@ scn GenerateLog
 ; this actually populates the log file properly
 
 string_var tempString
+array_var tempArray
 
 begin OnActivate
+
+  ; hsluv
+  call hsluvConstants
+
 	; register log file that we will use for manipulation
 	RegisterLog "output_coords"
 	DeleteLinesFromLog "output_coords" 0 -1
@@ -28,24 +33,24 @@ begin OnActivate
 	scribe "%z|output_coords" tempString
 
 	; generate the frame data
-	while ChristmasQuest.planeY <= (ChristmasQuest.treeBoundingBox[4] + 0.5)
-		let tempString := call MovePlane 0 0 1 100 100 0
-		scribe "%z|output_coords" tempString
-	  let ChristmasQuest.planeY += 0.05
-	loop
-	while ChristmasQuest.planeY >= -0.5
-		let tempString := call MovePlane 0 0 1 100 100 0
-		scribe "%z|output_coords" tempString
-	  let ChristmasQuest.planeY -= 0.05
-	loop
-	while ChristmasQuest.planeX <= (ChristmasQuest.treeBoundingBox[0] + 0.5)
-		let tempString := call MovePlane 1 0 0 100 0 0
-		scribe "%z|output_coords" tempString
-	  let ChristmasQuest.planeX += 0.05
-	loop
-	while ChristmasQuest.planeX >= (ChristmasQuest.treeBoundingBox[1] - 0.5)
-		let tempString := call MovePlane 1 0 0 100 0 0
-		scribe "%z|output_coords" tempString
-	  let ChristmasQuest.planeX -= 0.05
-	loop
+	; while ChristmasQuest.planeY <= (ChristmasQuest.treeBoundingBox[4] + 0.5)
+	; 	let tempString := call MovePlane 0 0 1 100 100 0
+	; 	scribe "%z|output_coords" tempString
+	;   let ChristmasQuest.planeY += 0.05
+	; loop
+	; while ChristmasQuest.planeY >= -0.5
+	; 	let tempString := call MovePlane 0 0 1 100 100 0
+	; 	scribe "%z|output_coords" tempString
+	;   let ChristmasQuest.planeY -= 0.05
+	; loop
+	; while ChristmasQuest.planeX <= (ChristmasQuest.treeBoundingBox[0] + 0.5)
+	; 	let tempString := call MovePlane 1 0 0 100 0 0
+	; 	scribe "%z|output_coords" tempString
+	;   let ChristmasQuest.planeX += 0.05
+	; loop
+	; while ChristmasQuest.planeX >= (ChristmasQuest.treeBoundingBox[1] - 0.5)
+	; 	let tempString := call MovePlane 1 0 0 100 0 0
+	; 	scribe "%z|output_coords" tempString
+	;   let ChristmasQuest.planeX -= 0.05
+	; loop
 end
