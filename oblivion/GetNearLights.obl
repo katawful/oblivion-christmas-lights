@@ -7,6 +7,7 @@ scn GetNearLights
 array_var currentLight ; current LED
 array_var currentPoint ; current point from plane
 array_var currentRGB ; current RGB values
+array_var inputHSL ; hsl from the input RGB
 array_var outputRGB ; the output RGB values
 
 array_var iter
@@ -32,7 +33,8 @@ int planeChoice ; 3 bit number 000, xyz
 string_var tempString
 
 begin function {currentPoint, currentLight, currentRGB, planeChoice}
-  let outputRGB := ar_Construct StringMap
+  ; let outputRGB := ar_Construct StringMap
+  let inputHSL := call RGB2HSL currentRGB
 
   ; the csv from matt has a BOM character for some reason, so the first line will
   ; be broken, thus we need to skip over it
@@ -126,26 +128,29 @@ begin function {currentPoint, currentLight, currentRGB, planeChoice}
   endif
 
   ; make sure to cap light amount
-  let temp := currentRGB["red"]
-  let temp *= lightFactor
-  if temp > 255
-    let temp := 255
-  endif
-  let outputRGB["red"] := temp
+  ; let temp := currentRGB["red"]
+  let inputHSL["luminance"] *= lightFactor
+  ; let temp *= lightFactor
+  ; if temp > 255
+  ;   let temp := 255
+  ; endif
+  ; let outputRGB["red"] := temp
 
-  let temp := currentRGB["green"]
-  let temp *= lightFactor
-  if temp > 255
-    let temp := 255
-  endif
-  let outputRGB["green"] := temp
+  ; let temp := currentRGB["green"]
+  ; let temp *= lightFactor
+  ; if temp > 255
+  ;   let temp := 255
+  ; endif
+  ; let outputRGB["green"] := temp
 
-  let temp := currentRGB["blue"]
-  let temp *= lightFactor
-  if temp > 255
-    let temp := 255
-  endif
-  let outputRGB["blue"] := temp
+  ; let temp := currentRGB["blue"]
+  ; let temp *= lightFactor
+  ; if temp > 255
+  ;   let temp := 255
+  ; endif
+  ; let outputRGB["blue"] := temp
+
+  let outputRGB := call HSL2RGB inputHSL
 
   SetFunctionValue outputRGB
 end

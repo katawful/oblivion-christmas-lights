@@ -58,7 +58,7 @@ begin function {L}
     while j <= 1
       let top1 := (284517 * n1 - 94839 * n3) * sub2
       let top2 := (838422 * n3 + 769860 * n2 + 731718 * n1) * L * sub2 - 769860 * j * L
-      let hslBottom := (632260 * n3 - 126452 * n2) * sub2 + 126452 * j
+      let hslBottom := ((632260 * n3 - 126452 * n2) * sub2 + 126452 * j) + 1
       let tempArray := ar_Construct Array
       let slope := top1 / hslBottom
       let intercept := top2 / hslBottom

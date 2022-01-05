@@ -44,9 +44,9 @@ begin function {hsl}
   let process := ar_Construct Array
 
   ; hsluv to lch
-  let H := hsl[0]
-  let Saturation := hsl[1]
-  let L := hsl[2]
+  let H := hsl["hue"]
+  let Saturation := hsl["saturation"]
+  let L := hsl["luminance"]
 
   if L > 99.99999999
     let process[0] := 100
@@ -87,19 +87,17 @@ begin function {hsl}
     let process[1] := Y
     let process[2] := (9 * Y - 15 * varV * Y - varV * X) / (3 * varV)
   endif
-  let temp := process[0]
-  printc "process 0 is: %g", temp
-  let temp := process[1]
-  printc "process 1 is: %g", temp
-  let temp := process[2]
-  printc "process 2 is: %g", temp
 
   ; xyz to rgb
   let tempArray := process
-  let rgbArray := ar_Construct Array
-  let rgbArray[0] := call hsluvFromLinear (call hsluvDotProduct ChristmasQuest.m[0] tempArray)
-  let rgbArray[1] := call hsluvFromLinear (call hsluvDotProduct ChristmasQuest.m[1] tempArray)
-  let rgbArray[2] := call hsluvFromLinear (call hsluvDotProduct ChristmasQuest.m[2] tempArray)
+  let rgbArray := ar_Construct StringMap
+  let rgbArray["red"] := call hsluvFromLinear (call hsluvDotProduct ChristmasQuest.m[0] tempArray)
+  let rgbArray["green"] := call hsluvFromLinear (call hsluvDotProduct ChristmasQuest.m[1] tempArray)
+  let rgbArray["blue"] := call hsluvFromLinear (call hsluvDotProduct ChristmasQuest.m[2] tempArray)
+
+  let rgbArray["red"] := (rgbArray["red"] * 255) % 255
+  let rgbArray["green"] := (rgbArray["green"] * 255) % 255
+  let rgbArray["blue"] := (rgbArray["blue"] * 255) % 255
 
   SetFunctionValue rgbArray
 end

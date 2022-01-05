@@ -1,0 +1,71 @@
+scn Rainbow
+
+; makes a rainbow
+array_var boundingBox ; +x, -x, +z, -z, +y
+array_var currentLED
+array_var hsl
+float outRed ; red
+float outGreen ; green
+float outBlue ; blue
+float currentX
+float currentZ
+float currentY
+float temp
+array_var outRGB
+float hueMultiply ; what we multiply the hue by to get the colors
+string_var lineString
+string_var tempString
+float step
+float moveStep ; how much to move the plane each step
+
+begin function {}
+  let lineString := ""
+  let ChristmasQuest.currentLight := 1
+  let boundingBox := ChristmasQuest.treeBoundingBox
+  let moveStep := boundingBox[4] / 360
+  let step := ChristmasQuest.planeY / moveStep
+  let hsl := ar_Construct StringMap
+  let hsl["hue"] := 360.0
+  let hsl["saturation"] := 100.0
+  let hsl["luminance"] := 50.0
+  while ChristmasQuest.currentLight < 501
+    let tempString := ChristmasQuest.treeCoordinates[ChristmasQuest.currentLight]
+    let currentLED := sv_Split tempString ","
+
+    ; the csv from matt has a BOM character for some reason, so the first line will
+    ; be broken, thus we need to skip over it
+    if ChristmasQuest.currentLight == 1
+      let currentX := ToNumber currentLED[1]
+      let currentZ := ToNumber currentLED[2]
+      let currentY := ToNumber currentLED[3]
+    else
+      let currentX := ToNumber currentLED[0]
+      let currentZ := ToNumber currentLED[1]
+      let currentY := ToNumber currentLED[2]
+    endif
+
+    let hueMultiply := currentY / ChristmasQuest.treeBoundingBox[4]
+    let hueMultiply := 1 - hueMultiply
+    let hsl["hue"] *= hueMultiply
+    let hsl["hue"] := (hsl["hue"] - step) % 361
+    let outRGB := call HSL2RGB hsl
+    let outRed := outRGB["red"]
+    let outGreen := outRGB["green"]
+    let outBlue := outRGB["blue"]
+    set lineString to sv_Construct "%z%g,%g,%g,", lineString, outRed, outGreen, outBlue
+    let hsl["hue"] := 360.0
+    let hsl["saturation"] := 100.0
+    let hsl["luminance"] := 50.0
+    let ChristmasQuest.currentLight += 1
+  loop
+
+  let ChristmasQuest.planeY += moveStep
+  ; get rid of the last comma so its a valid CSV
+  let temp := (sv_Length lineString) - 1
+  sv_Erase lineString temp 1
+
+  ; update frame number
+  let lineString := call AddFrame lineString
+
+  SetFunctionValue lineString ; return value
+end

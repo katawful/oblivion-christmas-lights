@@ -32,24 +32,29 @@ begin OnActivate
 	let tempString := call HeaderString
 	scribe "%z|output_coords" tempString
 
+	let ChristmasQuest.planeY := 0
+	while ChristmasQuest.planeY <= ChristmasQuest.treeBoundingBox[4]
+		let tempString := call Rainbow
+		scribe "%z|output_coords" tempString
+	loop
 	; generate the frame data
 	; while ChristmasQuest.planeY <= (ChristmasQuest.treeBoundingBox[4] + 0.5)
-	; 	let tempString := call MovePlane 0 0 1 100 100 0
+	; 	let tempString := call MovePlane 0 0 1 100 100 1
 	; 	scribe "%z|output_coords" tempString
 	;   let ChristmasQuest.planeY += 0.05
 	; loop
 	; while ChristmasQuest.planeY >= -0.5
-	; 	let tempString := call MovePlane 0 0 1 100 100 0
+	; 	let tempString := call MovePlane 0 0 1 100 100 1
 	; 	scribe "%z|output_coords" tempString
 	;   let ChristmasQuest.planeY -= 0.05
 	; loop
 	; while ChristmasQuest.planeX <= (ChristmasQuest.treeBoundingBox[0] + 0.5)
-	; 	let tempString := call MovePlane 1 0 0 100 0 0
+	; 	let tempString := call MovePlane 1 0 0 100 1 1
 	; 	scribe "%z|output_coords" tempString
 	;   let ChristmasQuest.planeX += 0.05
 	; loop
 	; while ChristmasQuest.planeX >= (ChristmasQuest.treeBoundingBox[1] - 0.5)
-	; 	let tempString := call MovePlane 1 0 0 100 0 0
+	; 	let tempString := call MovePlane 1 0 0 100 1 1
 	; 	scribe "%z|output_coords" tempString
 	;   let ChristmasQuest.planeX -= 0.05
 	; loop

@@ -65,9 +65,9 @@ float minimum
 begin function {rgbArray}
   let process := ar_Construct Array
   ; rgb to decimal
-  let process[0] := rgbArray[0] / 255
-  let process[1] := rgbArray[1] / 255
-  let process[2] := rgbArray[2] / 255
+  let process[0] := rgbArray["red"] / 255
+  let process[1] := rgbArray["green"] / 255
+  let process[2] := rgbArray["blue"] / 255
   ; rgb 2 xyz
   ; to linear
 	; temp array to linear
@@ -125,21 +125,21 @@ begin function {rgbArray}
   let process[2] := H
 
   ; lch to hsluv
-  let hsl := ar_Construct Array
+  let hsl := ar_Construct StringMap
   let maxChroma := call hsluvMaxChromaLH process[0] process[2]
   let temp := process[0]
-  let hsl[0] := process[2]
-  let hsl[1] := process[1] / maxChroma * 100
-  let hsl[2] := process[0]
+  let hsl["hue"] := process[2]
+  let hsl["saturation"] := process[1] / maxChroma * 100
+  let hsl["luminance"] := process[0]
   if temp > 99.9999
-    let hsl[0] := process[2]
-    let hsl[1] := 0
-    let hsl[2] := 100
+    let hsl["hue"] := process[2]
+    let hsl["saturation"] := 0
+    let hsl["luminance"] := 100
   endif
   if temp < 0.0000000001
-    let hsl[0] := process[2]
-    let hsl[1] := 0
-    let hsl[2] := 0
+    let hsl["hue"] := process[2]
+    let hsl["saturation"] := 0
+    let hsl["luminance"] := 0
   endif
 
 
