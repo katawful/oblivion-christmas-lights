@@ -44,10 +44,13 @@ begin function {}
       let currentY := ToNumber currentLED[2]
     endif
 
+    ; actual code
+    ; multiply hue by distance light is from end of bounding box
     let hueMultiply := currentY / ChristmasQuest.treeBoundingBox[4]
-    let hueMultiply := 1 - hueMultiply
+    let hueMultiply := 1 - hueMultiply ; invert movement
     let hsl["hue"] *= hueMultiply
-    let hsl["hue"] := (hsl["hue"] - step) % 361
+    let hsl["hue"] := (hsl["hue"] - step) % 361 ; decrement hue step if needed
+
     let outRGB := call HSL2RGB hsl
     let outRed := outRGB["red"]
     let outGreen := outRGB["green"]
@@ -60,6 +63,7 @@ begin function {}
   loop
 
   let ChristmasQuest.planeY += moveStep
+
   ; get rid of the last comma so its a valid CSV
   let temp := (sv_Length lineString) - 1
   sv_Erase lineString temp 1
