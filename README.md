@@ -1,5 +1,6 @@
 # Running Christmas Lights Using Oblivion
 **IF YOU'RE LOOKING FOR CSV FILES THEY'RE IN THE OUTPUT FOLDER**
+**IF YOU'RE MATT PARKER, YOU ONLY NEED THE** `for-matt.csv` **FILE**
 
 ## Running LED Lights at All
 In the grand scheme of the world, having a computing device turn on an LED programmatically is perhaps one of the simplest.
@@ -28,6 +29,20 @@ It also allows us to export strings of text arbitrarily.
 Thus the only 2 requirements of the GIFT coordinate system are met: a Turing complete language and a way to export strings.
 The only challenge is implementing it.
 
+# Using
+Due to licensing shenanigans, the actual Oblivion plugin is available on a different site.
+This repo just contains my code.
+In addition you need a GIFT format for your LED strip, I used [Matt's](https://github.com/standupmaths/xmastree2021/blob/main/coords_2021.csv).
+Run the shell script in `bindings/` with the path of the CSV to make it into an Oblivion format.
+Note, currently it expects a Windows file format.
+
+You need [ConScribe](https://www.nexusmods.com/oblivion/mods/26510).
+After installing, put the modified log file into `Oblivion\Data\ConScribe Logs\Per-Mods\`, naming it `coords_2021.log` until I dehardcode this value.
+Then install the plugin provide [here](https://www.nexusmods.com/oblivion/mods/51660/), and `coc ChristmasLights` when in-game and hit the button.
+
+# Performance
+With the power of a single thread in a purely interpreted language, the Rainbow effect script takes about 2 minutes to run on a 4790k @ 4.4GHz.
+
 # Further Details
 
 ## Color manipulation
@@ -52,6 +67,12 @@ This might seem simple in most languages, but isn't as much here.
 2. As we can't change variable types, we must put this in its own array for storage.
 3. However, for some reason again, the CSV file has a [BOM](https://en.wikipedia.org/wiki/Byte_order_mark) character which cannot be parsed. The first line must be singled out and modified again.
 4. Then we can store the coordinates into their own floats for my use.
+
+## Math
+Highest level math course I took was calculus 2 and pchem, both of which are not enough to generate the effects I would have liked programmatically.
+While you could generate anything that can be done with pure math, or with input strings, alas I am done.
+The essentials are here for anyone wishing to expand upon this, but I cannot.
+I attempted to rotate a rainbow around the Z axis as it moves up, idk what I ended up making
 
 ## License
 GPL v3
