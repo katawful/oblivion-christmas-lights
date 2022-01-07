@@ -12,6 +12,7 @@ int currentLight ; the current light we are working on
 float planeY ; Y of plane that moves through the tree
 float planeX
 float planeZ
+float currentHue ; the current hue we are processing
 
 ; hsluv integrations
 float hsluvRefY

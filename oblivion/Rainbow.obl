@@ -13,21 +13,32 @@ float currentY
 float temp
 array_var outRGB
 float hueMultiply ; what we multiply the hue by to get the colors
+float hueAddition ; what we add to the hue
 string_var lineString
 string_var tempString
 float step
-float moveStep ; how much to move the plane each step
+float moveStepZ ; how much to move the plane each step
+float moveStepY ; how much to move the plane each step
+int reverse
 
-begin function {}
+begin function {reverse}
   let lineString := ""
   let ChristmasQuest.currentLight := 1
   let boundingBox := ChristmasQuest.treeBoundingBox
-  let moveStep := boundingBox[4] / 360
-  let step := ChristmasQuest.planeY / moveStep
+  let moveStepY := boundingBox[4] / 360
+	let temp := ChristmasQuest.treeBoundingBox[3]
+	; set movestep to the range of Z plane normalized to 0 / 360
+	let moveStepZ := ((ChristmasQuest.treeBoundingBox[2] + abs temp) + (abs temp)) / 360
+	; step is amount we move the hue programatically (i.e. 1)
+  let step := ChristmasQuest.planeY / moveStepY
   let hsl := ar_Construct StringMap
-  let hsl["hue"] := 360.0
+  let hsl["hue"] := ChristmasQuest.currentHue
   let hsl["saturation"] := 100.0
-  let hsl["luminance"] := 50.0
+  let hsl["luminance"] := 10.0
+	; normalize boundingbox itself
+	let temp := boundingBox[3]
+	let boundingBox[2] += abs temp
+	let boundingBox[3] += abs temp
   while ChristmasQuest.currentLight < 501
     let tempString := ChristmasQuest.treeCoordinates[ChristmasQuest.currentLight]
     let currentLED := sv_Split tempString ","
@@ -44,25 +55,45 @@ begin function {}
       let currentY := ToNumber currentLED[2]
     endif
 
-    ; actual code
-    ; multiply hue by distance light is from end of bounding box
-    let hueMultiply := currentY / ChristmasQuest.treeBoundingBox[4]
-    let hueMultiply := 1 - hueMultiply ; invert movement
-    let hsl["hue"] *= hueMultiply
-    let hsl["hue"] := (hsl["hue"] - step) % 361 ; decrement hue step if needed
+		; apply rotation before adjusting hue
+		let temp := step
+		; if above plane, rotate
+		if CurrentY <= ChristmasQuest.planeY
+			let currentZ := (currentZ * cos 45) - (currentX * sin 45)
+			let currentX := (currentX * cos 45) + (currentY * sin 45)
+			let hsl["luminance"] := 50.0
+		endif
 
+		; add -z boundingBox so it's at least always 0
+		let temp := boundingBox[3]
+		let currentZ += abs temp
+		; hueMultiply is the currentZ divided by the total range of the Z boundingBox
+    let hueMultiply := currentZ / (boundingBox[2] + boundingBox[3])
+    let hueMultiply := 1 - hueMultiply ; invert because idk
+		let hueAddition := 360 * hueMultiply
+		let temp := (hsl["hue"] - step) - hueAddition
+    let hsl["hue"] := (abs temp) % 361 ; add the step for each pass
     let outRGB := call HSL2RGB hsl
     let outRed := outRGB["red"]
     let outGreen := outRGB["green"]
     let outBlue := outRGB["blue"]
+		let temp := hsl["hue"]
     set lineString to sv_Construct "%z%g,%g,%g,", lineString, outRed, outGreen, outBlue
-    let hsl["hue"] := 360.0
+
+    let hsl["hue"] := ChristmasQuest.currentHue
     let hsl["saturation"] := 100.0
-    let hsl["luminance"] := 50.0
+    let hsl["luminance"] := 10.0
     let ChristmasQuest.currentLight += 1
   loop
 
-  let ChristmasQuest.planeY += moveStep
+	let temp := (ChristmasQuest.currentHue - 1)
+	let ChristmasQuest.currentHue := (abs temp) % 361
+	if reverse == 0
+		let ChristmasQuest.planeY += moveStepY
+	else
+		let ChristmasQuest.planeY -= moveStepY
+	endif
+  let ChristmasQuest.planeZ += moveStepZ
 
   ; get rid of the last comma so its a valid CSV
   let temp := (sv_Length lineString) - 1

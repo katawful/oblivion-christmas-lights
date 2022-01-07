@@ -32,9 +32,16 @@ begin OnActivate
 	let tempString := call HeaderString
 	scribe "%z|output_coords" tempString
 
+	let ChristmasQuest.planeX := 0
+	let ChristmasQuest.planeZ := ChristmasQuest.treeBoundingBox[3]
 	let ChristmasQuest.planeY := 0
+  let ChristmasQuest.currentHue := 360
 	while ChristmasQuest.planeY <= ChristmasQuest.treeBoundingBox[4]
-		let tempString := call Rainbow
+		let tempString := call Rainbow 0
+		scribe "%z|output_coords" tempString
+	loop
+	while ChristmasQuest.planeY >= 0
+		let tempString := call Rainbow 1
 		scribe "%z|output_coords" tempString
 	loop
 	; generate the frame data
